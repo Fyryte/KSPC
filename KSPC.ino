@@ -39,11 +39,11 @@ void setup() {
     lcd.backlight();
     mySimpit.update(); //processes incoming messages
 }
-
+//---------------------------------------------------------------------------------LCD MESSAGE HANDLER---------------------------------------------------------------------------------//
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
   switch(messageType) {
     case APSIDES_MESSAGE:
-      if (msgSize == sizeof(apsidesMessage)) {
+      if (msgSize == sizeof(apsidesMessage)) {                                  // AP and PA derived from APSIDES
         apsidesMessage myApsides;
         myApsides = parseApsides(msg);
         dtostrf(myApsides.apoapsis, 8, 0, apoapsis_str);
@@ -51,7 +51,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         lcd.clear(); // clear the LCD screen
         lcd.setCursor(0, 0);
 
-        if (atoi(apoapsis_str) >= 1000) {
+        if (atoi(apoapsis_str) >= 1000) {                                       // AP displayed below 1000 meters (displayed as M)
           float apoapsis = atof(apoapsis_str) / 1000.0;
           char apoapsis_buf[8];
           dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
@@ -59,15 +59,15 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(apoapsis_buf);
           lcd.print(" KM");
         }
-        else if (atoi(apoapsis_str) < -1000) {
+        else if (atoi(apoapsis_str) < -1000) {                                  // AP displayed below -1000 meters (displayed as KM)
          float apoapsis = atof(apoapsis_str) / 1000.0;
          char apoapsis_buf[8];
          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
-          lcd.print("PA: ");
+          lcd.print("AP: ");
          lcd.print(apoapsis_buf);
           lcd.print(" KM");
         } 
-        else {
+        else {                                                                  // AP displayed above 1000 meters (displayed as KM)
           lcd.print("AP: ");
           lcd.print(apoapsis_str);
           lcd.print(" M");
@@ -75,7 +75,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
 
         lcd.setCursor(0, 1);
 
-        if (atoi(periapsis_str) >= 1000) {
+        if (atoi(periapsis_str) >= 1000) {                                      // PA displayed below 1000 meters (displayed as M)
           float periapsis = atof(periapsis_str) / 1000.0;
           char periapsis_buf[8];
           dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
@@ -83,7 +83,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(periapsis_buf);
           lcd.print(" KM");
         } 
-        else if (atoi(periapsis_str) < -1000) {
+        else if (atoi(periapsis_str) < -1000) {                                 // PA displayed below -1000 meters (displayed as KM)
         float periapsis = atof(periapsis_str) / 1000.0;
         char periapsis_buf[8];
         dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
@@ -91,7 +91,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         lcd.print(periapsis_buf);
         lcd.print(" KM");
         }
-        else {
+        else {                                                                 // PA displayed below -1000 meters (displayed as KM)
           lcd.print("PA: ");
           lcd.print(periapsis_str);
           lcd.print(" M");
@@ -100,3 +100,4 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
       break;
   }
 }
+//---------------------------------------------------------------------------------LCD MESSAGE HANDLER END---------------------------------------------------------------------------------//
