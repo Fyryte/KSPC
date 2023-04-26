@@ -58,7 +58,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(apoapsis_buf);
           lcd.print(" KM");
         }
-        else if (atoi(apoapsis_str) < -1000) {                                  // AP displayed below -1000 meters (displayed as KM)
+        else if (atoi(apoapsis_str) < -1000) {                                  // AP displayed below -1000-0 meters (displayed as KM)
          float apoapsis = atof(apoapsis_str) / 1000.0;
          char apoapsis_buf[8];
          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
@@ -81,7 +81,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(periapsis_buf);
           lcd.print(" KM");
         } 
-        else if (atoi(periapsis_str) < -1000) {                                 // PA displayed below -1000 meters (displayed as KM)
+        else if (atoi(periapsis_str) < -1000) {                                 // PA displayed above -1000-0 meters (displayed as KM)
         float periapsis = atof(periapsis_str) / 1000.0;
         char periapsis_buf[8];
         dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
