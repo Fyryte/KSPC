@@ -58,6 +58,14 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print("AP: ");
           lcd.print(apoapsis_buf);
           lcd.print(" KM");
+        }
+        else if (atoi(apoapsis_str) < -1000) {
+         float apoapsis = atof(apoapsis_str) / 1000.0;
+         char apoapsis_buf[8];
+         dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
+          lcd.print("PA: ");
+         lcd.print(apoapsis_buf);
+          lcd.print(" KM");
         } 
         else {
           lcd.print("AP: ");
@@ -75,13 +83,13 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(periapsis_buf);
           lcd.print(" KM");
         } 
-        else if (atoi(periapsis_str) < 1) {
+        else if (atoi(periapsis_str) < -1000) {
         float periapsis = atof(periapsis_str) / 1000.0;
         char periapsis_buf[8];
         dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
         lcd.print("PA: ");
         lcd.print(periapsis_buf);
-        lcd.print(" M");
+        lcd.print(" KM");
         }
         else {
           lcd.print("PA: ");
