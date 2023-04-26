@@ -26,18 +26,17 @@ void setup() {
 
 
   }
-  lcd.clear();                                         // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
+  lcd.clear();                          // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
   lcd.print("   Connected!");
-  delay(5000);
-  lcd.clear();
   mySimpit.printToKSP("Connected", PRINT_TO_SCREEN);
 
   mySimpit.registerChannel(APSIDES_MESSAGE); // register input channel
-  mySimpit.inboundHandler(messageHandler);  // register message handler
+  mySimpit.inboundHandler(messageHandler);   // register message handler
 }
 
   void loop() {
-mySimpit.update(); //processes incoming messages
+    lcd.backlight();
+    mySimpit.update(); //processes incoming messages
 }
 
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
@@ -46,23 +45,40 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
       if (msgSize == sizeof(apsidesMessage)) {
         apsidesMessage myApsides;
         myApsides = parseApsides(msg);
-        dtostrf(myApsides.apoapsis, 8, 2, apoapsis_str);                         // convert to meters with two decimal places
-        dtostrf(myApsides.apoapsis / 1000.0, 8, 2, apoapsis_str + 9);            // convert to kilometers with two decimal places
-        dtostrf(myApsides.periapsis, 8, 2, periapsis_str);                       // convert to meters with two decimal places
-        dtostrf(myApsides.periapsis / 1000.0, 8, 2, periapsis_str + 9);          // convert to kilometers with two decimal places
+        dtostrf(myApsides.apoapsis, 8, 0, apoapsis_str);
+        dtostrf(myApsides.periapsis, 8, 0, periapsis_str);
         lcd.setCursor(0,0);
         lcd.print("AP: ");
-        lcd.print(apoapsis_str);
-        lcd.print("M / ");
-        lcd.print(apoapsis_str + 9);
-        lcd.print("KM");
-        lcd.setCursor(0,1);
-        lcd.print("PA: ");
-        lcd.print(periapsis_str);
-        lcd.print("M / ");
-        lcd.print(periapsis_str + 9);
-        lcd.print("KM");
+
+
+if (atoi(apoapsis_str) >= 1000) {
+  float apoapsis = atof(apoapsis_str) / 1000.0;
+  char apoapsis_buf[8];
+  dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
+  lcd.print(apoapsis_buf);
+  lcd.print(" KM");
+} 
+else {
+  lcd.print(apoapsis_str);
+  lcd.print(" M");
+}
+
+if (atoi(periapsis_str) >= 1000) {
+  float periapsis = atof(periapsis_str) / 1000.0;
+  char periapsis_buf[8];
+  dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
+  lcd.print(periapsis_buf);
+  lcd.print(" KM");
+} 
+else if (atoi(periapsis_str) < 1) {
+  lcd.print("0.00 KM");
+} 
+else {
+  lcd.print(periapsis_str);
+  lcd.print(" M");
+}
       }
       break;
   }
 }
+
