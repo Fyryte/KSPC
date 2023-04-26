@@ -36,7 +36,6 @@ void setup() {
 }
 
   void loop() {
-    lcd.backlight();
     mySimpit.update(); //processes incoming messages
 }
 //---------------------------------------------------------------------------------LCD MESSAGE HANDLER---------------------------------------------------------------------------------//
@@ -74,7 +73,6 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         }
 
         lcd.setCursor(0, 1);
-
         if (atoi(periapsis_str) >= 1000) {                                      // PA displayed below 1000 meters (displayed as M)
           float periapsis = atof(periapsis_str) / 1000.0;
           char periapsis_buf[8];
