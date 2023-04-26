@@ -3,6 +3,7 @@
 #include <KerbalSimpitMessageTypes.h> // SimPit
 #include <PayloadStructs.h>           // SimPit
 
+
 KerbalSimpit mySimpit(Serial);
 LiquidCrystal_I2C lcd(0x3F,16,2);
 
@@ -26,18 +27,17 @@ void setup() {
 
 
   }
-  lcd.clear();                                         // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
+  lcd.clear();                          // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
   lcd.print("   Connected!");
-  delay(5000);
-  lcd.clear();
   mySimpit.printToKSP("Connected", PRINT_TO_SCREEN);
 
   mySimpit.registerChannel(APSIDES_MESSAGE); // register input channel
-  mySimpit.inboundHandler(messageHandler);  // register message handler
+  mySimpit.inboundHandler(messageHandler);   // register message handler
 }
 
   void loop() {
-mySimpit.update(); //processes incoming messages
+    lcd.backlight();
+    mySimpit.update(); //processes incoming messages
 }
 
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
@@ -48,14 +48,47 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         myApsides = parseApsides(msg);
         dtostrf(myApsides.apoapsis, 8, 0, apoapsis_str);
         dtostrf(myApsides.periapsis, 8, 0, periapsis_str);
-        lcd.setCursor(0,0);
-        lcd.print("AP: ");
-        lcd.print(apoapsis_str);
-        lcd.setCursor(0,1);
+        lcd.clear(); // clear the LCD screen
+        lcd.setCursor(0, 0);
+
+        if (atoi(apoapsis_str) >= 1000) {
+          float apoapsis = atof(apoapsis_str) / 1000.0;
+          char apoapsis_buf[8];
+          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
+          lcd.print("AP: ");
+          lcd.print(apoapsis_buf);
+          lcd.print(" KM");
+        } 
+        else {
+          lcd.print("AP: ");
+          lcd.print(apoapsis_str);
+          lcd.print(" M");
+        }
+
+        lcd.setCursor(0, 1);
+
+        if (atoi(periapsis_str) >= 1000) {
+          float periapsis = atof(periapsis_str) / 1000.0;
+          char periapsis_buf[8];
+          dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
+          lcd.print("PA: ");
+          lcd.print(periapsis_buf);
+          lcd.print(" KM");
+        } 
+        else if (atoi(periapsis_str) < 1) {
+        float periapsis = atof(periapsis_str) / 1000.0;
+        char periapsis_buf[8];
+        dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
         lcd.print("PA: ");
-        lcd.print(periapsis_str);
+        lcd.print(periapsis_buf);
+        lcd.print(" M");
+        }
+        else {
+          lcd.print("PA: ");
+          lcd.print(periapsis_str);
+          lcd.print(" M");
+        }
       }
       break;
   }
 }
-
