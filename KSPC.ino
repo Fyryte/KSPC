@@ -27,16 +27,16 @@ void setup() {
 
 
   }
-  lcd.clear();                          // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
+  lcd.clear();                                            // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
   lcd.print("   Connected!");
   mySimpit.printToKSP("Connected", PRINT_TO_SCREEN);
-
-  mySimpit.registerChannel(APSIDES_MESSAGE); // register input channel
-  mySimpit.inboundHandler(messageHandler);   // register message handler
+  mySimpit.registerChannel(APSIDES_MESSAGE);              // register input channel
+  mySimpit.inboundHandler(messageHandler);                // register message handler
 }
 
   void loop() {
-    mySimpit.update(); //processes incoming messages
+    mySimpit.update();                 //processes incoming messages
+    
 }
 //---------------------------------------------------------------------------------LCD MESSAGE HANDLER---------------------------------------------------------------------------------//
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
@@ -50,7 +50,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         lcd.clear(); // clear the LCD screen
         lcd.setCursor(0, 0);
 
-        if (atoi(apoapsis_str) >= 1000) {                                       // AP displayed below 1000 meters (displayed as M)
+        if (atoi(apoapsis_str) >= 1000) {                                       // AP displayed above than 1000 meters (displayed as M)
           float apoapsis = atof(apoapsis_str) / 1000.0;
           char apoapsis_buf[8];
           dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
@@ -66,14 +66,14 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
          lcd.print(apoapsis_buf);
           lcd.print(" KM");
         } 
-        else {                                                                  // AP displayed above 1000 meters (displayed as KM)
+        else {                                                                  // AP displayed below 1000 meters (displayed as KM)
           lcd.print("AP: ");
           lcd.print(apoapsis_str);
           lcd.print(" M");
         }
 
         lcd.setCursor(0, 1);
-        if (atoi(periapsis_str) >= 1000) {                                      // PA displayed below 1000 meters (displayed as M)
+        if (atoi(periapsis_str) >= 1000) {                                      // PA displayed above 1000 meters (displayed as M)
           float periapsis = atof(periapsis_str) / 1000.0;
           char periapsis_buf[8];
           dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
@@ -81,7 +81,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(periapsis_buf);
           lcd.print(" KM");
         } 
-        else if (atoi(periapsis_str) < -1000) {                                 // PA displayed above -1000-0 meters (displayed as KM)
+        else if (atoi(periapsis_str) < -1000) {                                 // PA displayed below -1000-0 meters (displayed as KM)
         float periapsis = atof(periapsis_str) / 1000.0;
         char periapsis_buf[8];
         dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
