@@ -47,38 +47,40 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         myApsides = parseApsides(msg);
         dtostrf(myApsides.apoapsis, 8, 0, apoapsis_str);
         dtostrf(myApsides.periapsis, 8, 0, periapsis_str);
-        lcd.setCursor(0,0);
+        lcd.clear(); // clear the LCD screen
+        lcd.setCursor(0, 0);
         lcd.print("AP: ");
 
+        if (atoi(apoapsis_str) >= 1000) {
+          float apoapsis = atof(apoapsis_str) / 1000.0;
+          char apoapsis_buf[8];
+          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
+          lcd.print(apoapsis_buf);
+          lcd.print(" KM");
+        } 
+        else {
+          lcd.print(apoapsis_str);
+          lcd.print(" M");
+        }
 
-if (atoi(apoapsis_str) >= 1000) {
-  float apoapsis = atof(apoapsis_str) / 1000.0;
-  char apoapsis_buf[8];
-  dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
-  lcd.print(apoapsis_buf);
-  lcd.print(" KM");
-} 
-else {
-  lcd.print(apoapsis_str);
-  lcd.print(" M");
-}
+        lcd.setCursor(0, 1);
+        lcd.print("PA: ");
 
-if (atoi(periapsis_str) >= 1000) {
-  float periapsis = atof(periapsis_str) / 1000.0;
-  char periapsis_buf[8];
-  dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
-  lcd.print(periapsis_buf);
-  lcd.print(" KM");
-} 
-else if (atoi(periapsis_str) < 1) {
-  lcd.print("0.00 KM");
-} 
-else {
-  lcd.print(periapsis_str);
-  lcd.print(" M");
-}
+        if (atoi(periapsis_str) >= 1000) {
+          float periapsis = atof(periapsis_str) / 1000.0;
+          char periapsis_buf[8];
+          dtostrf(round(periapsis * 100) / 100.0, 6, 2, periapsis_buf);
+          lcd.print(periapsis_buf);
+          lcd.print(" KM");
+        } 
+        else if (atoi(periapsis_str) < 1) {
+          lcd.print("0.00 M");
+        } 
+        else {
+          lcd.print(periapsis_str);
+          lcd.print(" M");
+        }
       }
       break;
   }
 }
-
