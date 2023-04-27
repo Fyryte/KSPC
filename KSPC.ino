@@ -49,8 +49,8 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
         dtostrf(myApsides.periapsis, 8, 0, periapsis_str);
         lcd.clear(); // clear the LCD screen
         lcd.setCursor(0, 0);
-
-        if (atoi(apoapsis_str) >= 1000) {                                       // AP displayed above than 1000 meters (displayed as M)
+      
+        if (atoi(apoapsis_str) >= 1000) {                                       // AP displayed above 1000 meters (displayed as M)
           float apoapsis = atof(apoapsis_str) / 1000.0;
           char apoapsis_buf[8];
           dtostrf(round(apoapsis * 100) / 100.0, 6, 2, apoapsis_buf);
@@ -89,7 +89,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           lcd.print(periapsis_buf);
           lcd.print(" KM");
         }
-        else {                                                                 // PA displayed below -1000 meters (displayed as KM)
+        else {                                                                 // PA displayed below 1000 meters (displayed as KM)
           lcd.print("PA: ");
           lcd.print(periapsis_str);
           lcd.print(" M");
