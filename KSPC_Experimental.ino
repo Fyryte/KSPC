@@ -50,6 +50,7 @@ void loop() {
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
   switch(messageType) {
     case APSIDES_MESSAGE: {
+    case(SCENE_CHANGE_MESSAGE):
       if (isFlying) {
         
 
