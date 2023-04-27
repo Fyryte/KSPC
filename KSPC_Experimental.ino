@@ -49,27 +49,41 @@ void loop() {
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
   switch(messageType) {
     case APSIDES_MESSAGE: {
+
       // AP and PA derived from APSIDES
       if (msgSize == sizeof(apsidesMessage)) {                                  
         apsidesMessage myApsides = parseApsides(msg);
         lcd.clear(); // clear the LCD screen
         lcd.setCursor(0, 0);
       
-        // AP displayed above 1000 meters (displayed as KM or mKM)
+        // AP displayed above 1000 meters (displayed as M)
         if (myApsides.apoapsis >= 1000 || myApsides.apoapsis < -1000) {
           float apoapsis = myApsides.apoapsis / 1000.0;
           char apoapsis_buf[16] = "AP: ";
-          if (myApsides.apoapsis >= 1000000 || myApsides.apoapsis < -1000000) {
-            dtostrf(round(apoapsis * 10) / 10.0, 6, 1, &apoapsis_buf[4]);
-            strncat(apoapsis_buf, " mKM", 4);
-          } else {
-            dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
-            strncat(apoapsis_buf, " KM", 3);
-          }
+          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
+          strncat(apoapsis_buf, " KM", 3);
           lcd.print(apoapsis_buf);
         } 
 
-        // AP displayed below 1000 meters (displayed as M)
+        // AP displayed above 1M meters (displayed as mM)
+        if (myApsides.apoapsis >= 1000000 || myApsides.apoapsis < -1000000) {
+          float apoapsis = myApsides.apoapsis / 1000000.0;
+          char apoapsis_buf[16] = "AP: ";
+          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
+          strncat(apoapsis_buf, " mM", 3);
+          lcd.print(apoapsis_buf);
+        } 
+        // AP displayed above 1B meters (displayed as Gm)
+        if (myApsides.apoapsis >= 1000000000 || myApsides.apoapsis < -1000000000) {
+          float apoapsis = myApsides.apoapsis / 1000000000.0;
+          char apoapsis_buf[16] = "AP: ";
+          dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
+          strncat(apoapsis_buf, " Gm", 3);
+          lcd.print(apoapsis_buf);
+        } 
+
+
+        // AP displayed below 1000 meters (displayed as KM)
         else {
           char meters_string[16] = "AP: ";
           dtostrf(myApsides.apoapsis, 8, 0, &meters_string[4]);
@@ -79,21 +93,33 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
 
         lcd.setCursor(0, 1);
 
-        // PA displayed above 1000 meters (displayed as KM or mKM)
+        // PA displayed above 1000 meters (displayed as M)
         if (myApsides.periapsis >= 1000 || myApsides.periapsis < -1000) {
           float periapsis = myApsides.periapsis / 1000.0;
           char periapsis_buf[16] = "PA: ";
-          if (myApsides.periapsis >= 1000000 || myApsides.periapsis < -1000000) {
-            dtostrf(round(periapsis * 10) / 10.0, 6, 1, &periapsis_buf[4]);
-            strncat(periapsis_buf, " mKM", 4);
-          } else {
-            dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
-            strncat(periapsis_buf, " KM", 3);
-          }
+          dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
+          strncat(periapsis_buf, " KM", 3);
           lcd.print(periapsis_buf);
         } 
 
-        // PA displayed below 1000 meters (displayed as M)
+        // PA displayed above 1M meters (displayed as mM)
+        if (myApsides.periapsis >= 1000000 || myApsides.periapsis < -1000000) {
+          float periapsis = myApsides.periapsis / 1000000.0;
+          char periapsis_buf[16] = "AP: ";
+          dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
+          strncat(periapsis_buf, " mM", 3);
+          lcd.print(periapsis_buf);
+        } 
+        // PA displayed above 1B meters (displayed as Gm)
+        if (myApsides.periapsis >= 1000000000 || myApsides.periapsis < -1000000000) {
+          float periapsis = myApsides.periapsis / 1000000000.0;
+          char periapsis_buf[16] = "AP: ";
+          dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
+          strncat(periapsis_buf, " Gm", 3);
+          lcd.print(periapsis_buf);
+        } 
+
+        // PA displayed below 1000 meters (displayed as KM)
         else {
           char meters_string[16] = "PA: ";
           dtostrf(myApsides.periapsis, 8, 0, &meters_string[4]);
