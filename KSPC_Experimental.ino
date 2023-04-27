@@ -5,6 +5,7 @@
 
 KerbalSimpit mySimpit(Serial);
 LiquidCrystal_I2C lcd(0x3F,16,2);
+bool isFlying = false;
 
 void setup() {
   lcd.init();
@@ -49,6 +50,8 @@ void loop() {
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
   switch(messageType) {
     case APSIDES_MESSAGE: {
+      if (isFlying) {
+        
 
       // AP and PA derived from APSIDES
       if (msgSize == sizeof(apsidesMessage)) {                                  
@@ -125,9 +128,17 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           dtostrf(myApsides.periapsis, 8, 0, &meters_string[4]);
           strncat(meters_string, " M", 3);
           lcd.print(meters_string);
+          
         }
       }
+      else {
+        lcd.clear();
+        lcd.print("No Flight");
+      }
       break;
+
+      }
     }
   }
 }
+
