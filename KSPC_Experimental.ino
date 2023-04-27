@@ -61,7 +61,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           char apoapsis_buf[16] = "AP: ";
           if (myApsides.apoapsis >= 1000000 || myApsides.apoapsis < -1000000) {
             dtostrf(round(apoapsis * 10) / 10.0, 6, 1, &apoapsis_buf[4]);
-            strncat(apoapsis_buf, "mKM", 3);
+            strncat(apoapsis_buf, " mKM", 4);
           } else {
             dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
             strncat(apoapsis_buf, " KM", 3);
@@ -85,7 +85,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           char periapsis_buf[16] = "PA: ";
           if (myApsides.periapsis >= 1000000 || myApsides.periapsis < -1000000) {
             dtostrf(round(periapsis * 10) / 10.0, 6, 1, &periapsis_buf[4]);
-            strncat(periapsis_buf, "mKM", 3);
+            strncat(periapsis_buf, " mKM", 4);
           } else {
             dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
             strncat(periapsis_buf, " KM", 3);
