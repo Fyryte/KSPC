@@ -4,67 +4,104 @@
 #include <PayloadStructs.h>           // SimPit
 
 KerbalSimpit mySimpit(Serial);
-LiquidCrystal_I2C lcd(0x3F, 16, 2);
-
-char apoapsis_str[150];  // telemetry strings
-char periapsis_str[150];
+LiquidCrystal_I2C lcd(0x3F,16,2);
 
 void setup() {
-  Serial.begin(115200);  // Initializes the serial communication
-  lcd.init();             // LCD Display initialization
+  lcd.init();
+  lcd.clear();
   lcd.backlight();
-  lcd.print("   Working");
-  delay(500);
-  lcd.print(".");
-  delay(500);
-  lcd.print(".");
-  delay(500);
-  lcd.print(".");
-  delay(500);
 
-  while (!mySimpit.init()) {
-    delay(100);  // Handshake protocol attempts every 100ms until connection
+  while (!mySimpit.init()) {         
+    lcd.clear();
+    lcd.print("   Working");
+
+    // Initializes the serial communication
+    Serial.begin(115200);              
+
+    // LCD Display for the rest until the end of bracket
+    delay(250);
+    lcd.print(".");
+    delay(250);
+    lcd.print(".");
+    delay(250);
+    lcd.print(".");
+    delay(250);
   }
+
+  // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
   
-  lcd.clear();  // Once handshake has been completed on game launch this block prints connected to SimPit in game and the LCD
+  lcd.clear();                                            
   lcd.print("   Connected!");
   mySimpit.printToKSP("Connected", PRINT_TO_SCREEN);
-  mySimpit.registerChannel(APSIDES_MESSAGE);  // register input channel
-  mySimpit.inboundHandler(messageHandler);    // register message handler
+  
+  // register input channel
+  mySimpit.registerChannel(APSIDES_MESSAGE);              
+  
+  // register message handler
+  mySimpit.inboundHandler(messageHandler);                
 }
 
+//processes incoming messages
 void loop() {
-  mySimpit.update();  // processes incoming messages
+  mySimpit.update();
 }
 
-// LCD MESSAGE HANDLER
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
-  switch (messageType) {
-    case APSIDES_MESSAGE:
-      if (msgSize == sizeof(apsidesMessage)) {
-        // AP and PA derived from APSIDES
-        apsidesMessage myApsides;
-        myApsides = parseApsides(msg);
-        
-        // Convert apoapsis and periapsis values to floats
-        float apoapsis = myApsides.apoapsis / 1000.0;
-        float periapsis = myApsides.periapsis / 1000.0;
-        
-        // Format apoapsis and periapsis values as strings
-        dtostrf(apoapsis, 6, 2, apoapsis_str);
-        dtostrf(periapsis, 6, 2, periapsis_str);
-        
-        // Display AP and PA on LCD
-        lcd.clear();  // clear the LCD screen
+  switch(messageType) {
+    case APSIDES_MESSAGE: {
+      // AP and PA derived from APSIDES
+      if (msgSize == sizeof(apsidesMessage)) {                                  
+        apsidesMessage myApsides = parseApsides(msg);
+        lcd.clear(); // clear the LCD screen
         lcd.setCursor(0, 0);
-        lcd.print("AP: ");
-        lcd.print(apoapsis_str);
-        lcd.print(" KM");
+      
+        // AP displayed above 1000 meters (displayed as KM or mKM)
+        if (myApsides.apoapsis >= 1000 || myApsides.apoapsis < -1000) {
+          float apoapsis = myApsides.apoapsis / 1000.0;
+          char apoapsis_buf[16] = "AP: ";
+          if (myApsides.apoapsis >= 1000000 || myApsides.apoapsis < -1000000) {
+            dtostrf(round(apoapsis * 10) / 10.0, 6, 1, &apoapsis_buf[4]);
+            strncat(apoapsis_buf, "mKM", 3);
+          } else {
+            dtostrf(round(apoapsis * 100) / 100.0, 6, 2, &apoapsis_buf[4]);
+            strncat(apoapsis_buf, " KM", 3);
+          }
+          lcd.print(apoapsis_buf);
+        } 
+
+        // AP displayed below 1000 meters (displayed as M)
+        else {
+          char meters_string[16] = "AP: ";
+          dtostrf(myApsides.apoapsis, 8, 0, &meters_string[4]);
+          strncat(meters_string, " M", 3);
+          lcd.print(meters_string);
+        }
+
         lcd.setCursor(0, 1);
-        lcd.print("PA: ");
-        lcd.print(periapsis_str);
-        lcd.print(" KM");
+
+        // PA displayed above 1000 meters (displayed as KM or mKM)
+        if (myApsides.periapsis >= 1000 || myApsides.periapsis < -1000) {
+          float periapsis = myApsides.periapsis / 1000.0;
+          char periapsis_buf[16] = "PA: ";
+          if (myApsides.periapsis >= 1000000 || myApsides.periapsis < -1000000) {
+            dtostrf(round(periapsis * 10) / 10.0, 6, 1, &periapsis_buf[4]);
+            strncat(periapsis_buf, "mKM", 3);
+          } else {
+            dtostrf(round(periapsis * 100) / 100.0, 6, 2, &periapsis_buf[4]);
+            strncat(periapsis_buf, " KM", 3);
+          }
+          lcd.print(periapsis_buf);
+        } 
+
+        // PA displayed below 1000 meters (displayed as M)
+        else {
+          char meters_string[16] = "PA: ";
+          dtostrf(myApsides.periapsis, 8, 0, &meters_string[4]);
+          strncat(meters_string, " M", 3);
+          lcd.print(meters_string);
+        }
       }
       break;
+    }
   }
 }
