@@ -50,10 +50,7 @@ void loop() {
 void messageHandler(byte messageType, byte msg[], byte msgSize) {
   switch(messageType) {
     case APSIDES_MESSAGE: {
-    case SCENE_CHANGE_MESSAGE:
-      if (isFlying) {
         
-
       // AP and PA derived from APSIDES
       if (msgSize == sizeof(apsidesMessage)) {                                  
         apsidesMessage myApsides = parseApsides(msg);
@@ -130,11 +127,7 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
           strncat(meters_string, " M", 3);
           lcd.print(meters_string);
           
-        }
-      }
-      else {
-        lcd.clear();
-        lcd.print("No Flight");
+        
       }
       break;
 
@@ -142,4 +135,3 @@ void messageHandler(byte messageType, byte msg[], byte msgSize) {
     }
   }
 }
-
