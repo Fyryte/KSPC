@@ -5,6 +5,7 @@
 
 KerbalSimpit mySimpit(Serial);
 LiquidCrystal_I2C lcd(0x3F,16,2);
+const int THROTTLE_PIN = A0; 
 
 
 void setup() {
@@ -37,13 +38,23 @@ void setup() {
   
   // register input channel
   mySimpit.registerChannel(APSIDES_MESSAGE);              
-  
   // register message handler
-  mySimpit.inboundHandler(messageHandler);                
+  mySimpit.inboundHandler(messageHandler);    
+  const int THROTTLE_PIN = A0; 
+            
 }
 
 //processes incoming messages
 void loop() {
+  throttleMessage throttle_msg;
+  // read the input on analog pin 0:
+  int reading = analogRead(THROTTLE_PIN);
+  // Convert it in KerbalSimpit Range
+  throttle_msg.throttle = map(reading, 0, 1023, 0, INT16_MAX);
+  // print out the value you read:
+  mySimpit.send(THROTTLE_MESSAGE, throttle_msg);
+    // delay in between reads for stability
+  delay(1);  
   mySimpit.update();
 }
 
